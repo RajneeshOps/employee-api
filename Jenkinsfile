@@ -1,16 +1,6 @@
 
 node {
-  stage('Installation Go') {
-      try {
-          // Update apt packages
-          sh 'apt update'
-          // Install Go using snap
-          sh 'snap install go --classic'
-      } catch (Exception e) {
-          echo "Failed to install Go: ${e.message}"
-          currentBuild.result = 'FAILURE'
-          error("Failed to install Go")
-      }
+  
   }
   
   stage('Clone Repository') {
