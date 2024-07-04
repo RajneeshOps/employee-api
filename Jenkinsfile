@@ -27,7 +27,7 @@ node {
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
-                reportDir: '/var/lib/jenkins/workspace/Declarative Pipeline GoLang DAST/ZAP_2.14.0/',
+                reportDir: '/var/lib/jenkins/workspace/Scripted-Golang-Unit-Testing/ZAP_2.14.0/',
                 reportFiles: 'out2.html',
                 reportName: 'ZAP Scan Report',
                 reportTitles: ''
