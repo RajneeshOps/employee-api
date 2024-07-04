@@ -1,51 +1,42 @@
-pipeline {
-    agent any
-    environment {
-        SUDO_PASSWORD = credentials('rajops') // Store your sudo password securely in Jenkins credentials
+node {
+    // Environment variables
+    def TARGET_URL = 'https://github.com/RajneeshOps/employee-api.git'
+
+    // Checkout stage
+    stage('Checkout') {
+        checkout scmGit(
+            branches: [[name: '*/main']],
+            extensions: [],
+            userRemoteConfigs: [[url: TARGET_URL]]
+        )
     }
-    stages {
-        stage('Installation Go') {
-            steps {
-                script {
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        // Update apt packages
-                        sh "echo \$SUDO_PASSWORD | sudo -S apt update"
-                        // Install Go using snap
-                        sh "echo \$SUDO_PASSWORD | sudo -S snap install go --classic"
-                    }
-                }
-            }
-        }
-        stage('Clone Repository') {
-            steps {
-                script {
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        // Clone the Git repository
-                        git branch: 'main', url: 'https://github.com/RajneeshOps/employee-api.git'
-                    }
-                }
-            }
-        }
-        stage('Testing') {
-            steps {
-                script {
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        // Run go test and ignore errors
-                        sh 'go test ./... || true'
-                    }
-                }
-            }
-        }
-        stage('Generate HTML Report') {
-            steps {
-                script {
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        // Run go test with coverage and generate HTML report
-                        sh 'go test ./... -coverprofile=coverage.out || true'
-                        sh 'go tool cover -html=coverage.out -o coverage.html || true'
-                    }
-                }
-            }
-        }
+
+    // Install ZAP stage
+    stage('Install ZAP') {
+        // Download and install OWASP ZAP
+        sh 'wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz'
+        sh 'tar -xvf ZAP_2.14.0_Linux.tar.gz'
+    }
+
+    // Run ZAP Scan stage
+    stage('Run ZAP Scan') {
+        // Start ZAP and perform the scan
+        sh "/var/lib/jenkins/workspace/'Scripted-Golang-Unit-Testing'/ZAP_2.14.0/zap.sh -cmd -port 8090 -quickurl http://18.183.109.200:8080/api/v1/employee/health -quickprogress -quickout ~/out2.html"
+    }
+
+    // Publish ZAP Scan Report stage
+    stage('Publish ZAP Scan Report') {
+        // Publish HTML report
+        publishHTML(
+            target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: '/var/lib/jenkins/workspace/Declarative Pipeline GoLang DAST/ZAP_2.14.0/',
+                reportFiles: 'out2.html',
+                reportName: 'ZAP Scan Report',
+                reportTitles: ''
+            ]
+        )
     }
 }
