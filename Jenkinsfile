@@ -3,9 +3,9 @@ node {
   stage('Installation Go') {
       try {
           // Update apt packages
-          sh 'sudo apt update'
+          sh 'apt update'
           // Install Go using snap
-          sh 'sudo snap install go --classic'
+          sh 'snap install go --classic'
       } catch (Exception e) {
           echo "Failed to install Go: ${e.message}"
           currentBuild.result = 'FAILURE'
