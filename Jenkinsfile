@@ -1,37 +1,15 @@
 node {
-    // Environment variables
-    def TARGET_URL = 'https://github.com/RajneeshOps/employee-api.git'
-
-    // Checkout stage
+    def goHome = tool name: 'go', type: 'go'
+    
     stage('Checkout') {
-        checkout scmGit(
-            branches: [[name: '*/main']],
-            extensions: [],
-            userRemoteConfigs: [[url: TARGET_URL]]
-        )
+        git branch: 'main', url: 'https://github.com/RajneeshOps/Employee-API.git'
     }
+    
+    stage('SonarQube Analysis') {
+    def scannerHome = tool 'SonarScanner';
+    withSonarQubeEnv() {
+      sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=golang-static-code-analysis -Dsonar.projectName='golang-static-code-analysis'"
 
-    // Install ZAP stage
-    stage('Install ZAP') {
-        // Download and install OWASP ZAP
-        sh 'wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz'
-        sh 'tar -xvf ZAP_2.14.0_Linux.tar.gz'
     }
-
-   
-    // Publish ZAP Scan Report stage
-    stage('Publish ZAP Scan Report') {
-        // Publish HTML report
-        publishHTML(
-            target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: '/var/lib/jenkins/workspace/Scripted-Golang-Unit-Testing/ZAP_2.14.0/',
-                reportFiles: 'out2.html',
-                reportName: 'ZAP Scan Report',
-                reportTitles: ''
-            ]
-        )
-    }
+  }
 }
