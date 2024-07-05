@@ -1,39 +1,42 @@
 node {
-  stage('Installation Pre-Requisites') {
-      try {
-          // Install GolangCI-lint
-          sh 'go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest'
-          // Add $HOME/go/bin to PATH
-          env.PATH += ":$HOME/go/bin"
-      } catch (Exception e) {
-          echo "Error occurred during installation pre-requisites: ${e.getMessage()}"
-      }
-  }
+    // Environment variables
+    def TARGET_URL = 'https://github.com/RajneeshOps/employee-api.git'
 
-  stage('Clone Repository') {
-      try {
-          // Clone the Git repository
-          git branch: 'main', url: 'https://github.com/RajneeshOps/employee-api.git'
-      } catch (Exception e) {
-          echo "Error occurred during repository cloning: ${e.getMessage()}"
-      }
-  }
+    // Checkout stage
+    stage('Checkout') {
+        checkout scmGit(
+            branches: [[name: '*/main']],
+            extensions: [],
+            userRemoteConfigs: [[url: TARGET_URL]]
+        )
+    }
 
-  stage('Linting') {
-      try {
-          // Run golangci-lint and ignore errors
-          sh 'golangci-lint run ./... || true'
-      } catch (Exception e) {
-          echo "Error occurred during linting: ${e.getMessage()}"
-      }
-  }
+    // Install ZAP stage
+    stage('Install ZAP') {
+        // Download and install OWASP ZAP
+        sh 'wget https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz'
+        sh 'tar -xvf ZAP_2.14.0_Linux.tar.gz'
+    }
 
-  stage('Generate HTML Report') {
-      try {
-          // Run golangci-lint with the --out-format option to specify the output format
-          sh 'golangci-lint run ./... --out-format html > report.html || true'
-      } catch (Exception e) {
-          echo "Error occurred during HTML report generation: ${e.getMessage()}"
-      }
-  }
+    // Run ZAP Scan stage
+    stage('Run ZAP Scan') {
+        // Start ZAP and perform the scan
+        sh "/var/lib/jenkins/workspace/'Scripted-Golang-DAST'/ZAP_2.14.0/zap.sh -cmd -port 8090 -quickurl http://18.183.109.200:8080/api/v1/employee/health -quickprogress -quickout ~/out2.html"
+    }
+
+    // Publish ZAP Scan Report stage
+    stage('Publish ZAP Scan Report') {
+        // Publish HTML report
+        publishHTML(
+            target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: '/var/lib/jenkins/workspace/Scripted-Golang-DAST/ZAP_2.14.0/',
+                reportFiles: 'out2.html',
+                reportName: 'ZAP Scan Report',
+                reportTitles: ''
+            ]
+        )
+    }
 }
