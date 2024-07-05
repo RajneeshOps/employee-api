@@ -1,4 +1,5 @@
 node {
+    def SNYK_TOKEN = credentials('snyk1')
 
     stage('checkout') {
         git branch: 'main', url: 'https://github.com/RajneeshOps/employee-api.git'
@@ -9,10 +10,7 @@ node {
     }
 
     stage('Run Snyk Scan') {
-        // Install snyk CLI globally
-        sh 'npm install -g snyk'
-        
-        // Run Snyk test across all projects
-        sh 'snyk test --all-projects'
+        // Use Snyk plugin step to run security tests
+        snykSecurityScan credentialsId: 'snyk1', failOnIssues: true
     }
 }
