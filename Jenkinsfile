@@ -1,14 +1,16 @@
-node {
-    def goHome = tool name: 'go', type: 'go'
-
-    stage('Checkout') {
-        git branch: 'main', url: 'https://github.com/RajneeshOps/Employee-API.git'
+pipeline {
+    agent any
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk-amd64'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
     }
-
-    stage('SonarQube Analysis') {
-        def scannerHome = tool name: 'SonarQube', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-        withSonarQubeEnv('SonarQube') { // Ensure 'SonarQube' matches the name configured in Jenkins
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=golang-static-code-analysis -Dsonar.projectName='golang-static-code-analysis'"
+    stages {
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '/var/lib/jenkins/tools/hudson.plugins.sonar.SonarRunnerInstallation/SonarQube/bin/sonar-scanner -Dsonar.projectKey=golang-static-code-analysis -Dsonar.projectName=golang-static-code-analysis'
+                }
+            }
         }
     }
 }
