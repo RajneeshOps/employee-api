@@ -1,6 +1,6 @@
 node {
     // Define environment variables
-    def SCANNER_HOME = tool name: 'SonarQube Scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+    def SCANNER_HOME = tool name: 'sonar'
     def SONAR_HOST_URL = 'http://54.237.11.98:9000'
     def SONAR_PROJECT_KEY = 'golang-sca'
     def SONAR_TOKEN = 'sqp_ea5d795693f025cfd8cbc94f2b0a309b2f2c50e5'
