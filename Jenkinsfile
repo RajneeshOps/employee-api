@@ -12,7 +12,7 @@ node {
 
         stage('Archive Report') {
             // Archive the dependency check report
-            archiveArtifacts(artifacts: '**/dependency-check-report.xml', allowEmptyArchive: true)
+           // archiveArtifacts(artifacts: '**/dependency-check-report.xml', allowEmptyArchive: true)
         }
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
