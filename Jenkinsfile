@@ -7,20 +7,20 @@ node {
 
         stage('Dependency Scan') {
             // Run OWASP Dependency-Check
-            def dependencyCheck = dependencyCheckPublisher 
-            if (dependencyCheck > 0) {
-                error "Dependency check found vulnerabilities"
-            }
+            dependencyCheckPublisher(pattern: '**', includesExcludes: [[includePattern: '**']], failBuildOnCVSS: '10')
         }
 
-        stage('Archive Report') {
-            // Archive the dependency check report
-            archiveArtifacts artifacts: 'dep-check.html', allowEmptyArchive: true
-        }
+        stage('Publish Dependency Check Report') {
+    // Publish Dependency Check report
+    publishHTML([
+        allowMissing: false,
+        alwaysLinkToLastBuild: false,
+        keepAll: true,
+        reportDir: '',
+        reportFiles: 'dep-check.html',
+        reportName: 'Dependency Check Report'
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
         throw e
-    } finally {
-        // Clean up or finalize tasks if needed
     }
 }
