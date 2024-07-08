@@ -21,7 +21,7 @@ node {
     // Run ZAP Scan stage
     /*stage('Run ZAP Scan') {
         // Start ZAP and perform the scan
-        sh "/var/lib/jenkins/workspace/'Scripted-Golang-DAST'/ZAP_2.15.0/zap.sh -cmd -port 8090 -quickurl http://localhost/api/v1/employee/health -quickprogress -quickout ~/out2.html"
+        sh "/var/lib/jenkins/workspace/'DAST'/ZAP_2.15.0/zap.sh -cmd -port 8090 -quickurl http://localhost/api/v1/employee/health -quickprogress -quickout ~/out2.html"
     }*/
 
     // Publish ZAP Scan Report stage
@@ -32,7 +32,7 @@ node {
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
-                reportDir: '/var/lib/jenkins/workspace/Scripted-Golang-DAST/ZAP_2.15.0/',
+                reportDir: '/var/lib/jenkins/workspace/DAST/ZAP_2.15.0/',
                 reportFiles: 'out2.html',
                 reportName: 'ZAP Scan Report',
                 reportTitles: ''
