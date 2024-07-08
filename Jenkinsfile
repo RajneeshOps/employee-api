@@ -1,5 +1,10 @@
 node {
     try {
+        stage('Checkout') {
+            // Checkout code from Git
+            git branch: 'main', url: 'https://github.com/RajneeshOps/employee-api.git'
+        }
+
         stage('Dependency Scan') {
             // Run OWASP Dependency-Check
             dependencyCheckPublisher(pattern: '**', includesExcludes: [[includePattern: '**']], failBuildOnCVSS: '10')
