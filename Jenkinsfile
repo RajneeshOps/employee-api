@@ -15,7 +15,7 @@ node {
 
         stage('Archive Report') {
             // Archive the dependency check report
-            archiveArtifacts artifacts: '**/dependency-check-report.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/dep-check.html', allowEmptyArchive: true
         }
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
