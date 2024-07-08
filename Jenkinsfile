@@ -19,10 +19,10 @@ node {
     }
 
     // Run ZAP Scan stage
-    //stage('Run ZAP Scan') {
+    /*stage('Run ZAP Scan') {
         // Start ZAP and perform the scan
-        //sh "/var/lib/jenkins/workspace/'Scripted-Golang-DAST'/ZAP_2.14.0/zap.sh -cmd -port 8090 -quickurl http://localhost/api/v1/employee/health -quickprogress -quickout ~/out2.html"
-    }
+        sh "/var/lib/jenkins/workspace/'Scripted-Golang-DAST'/ZAP_2.14.0/zap.sh -cmd -port 8090 -quickurl http://localhost/api/v1/employee/health -quickprogress -quickout ~/out2.html"
+    }*/
 
     // Publish ZAP Scan Report stage
     stage('Publish ZAP Scan Report') {
