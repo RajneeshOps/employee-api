@@ -7,7 +7,7 @@ node {
 
         stage('Dependency Scan') {
             // Run OWASP Dependency-Check
-            def dependencyCheck = dependencyCheckPublisher pattern: '**'
+            def dependencyCheck = dependencyCheckPublisher 
             if (dependencyCheck > 0) {
                 error "Dependency check found vulnerabilities"
             }
@@ -15,7 +15,7 @@ node {
 
         stage('Archive Report') {
             // Archive the dependency check report
-            archiveArtifacts artifacts: '**/dep-check.html', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'dep-check.html', allowEmptyArchive: true
         }
     } catch (Exception e) {
         currentBuild.result = 'FAILURE'
