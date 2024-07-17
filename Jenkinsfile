@@ -3,7 +3,7 @@ node {
     def GIT_REPO = 'https://github.com/RajneeshOps/employee-api.git'
     def BRANCH = 'main'
     def SONAR_SCANNER = 'sonar'
-    def GO_VERSION = 'go'
+    def GO_VERSION = 'Go'
     def ZAP_URL = 'https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz'
     def ZAP_FOLDER = 'ZAP_2.14.0'
     def DEP_CHECK_REPORT = 'dep-check.html'
