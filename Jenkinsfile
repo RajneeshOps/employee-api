@@ -38,21 +38,21 @@ node {
             sh 'go test ./... || true'
         }
 
-        stage('SonarQube Analysis') {
-            def scannerHome = tool name: sonar
-            withSonarQubeEnv {
-                sh "${scannerHome}/bin/sonar-scanner"
-            }
-        }
-
-        stage('Static Code Analysis') {
+        stage('Bug-Analysis') {
             // Install and run GolangCI-lint for static code analysis
             sh 'go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest'
             env.PATH += ":$HOME/go/bin"
             sh 'golangci-lint run ./... || true'
         }
 
-        stage('Dependency Scan') {
+        stage('SonarQube Analysis') {
+            def scannerHome = tool name: sonar
+            withSonarQubeEnv {
+                sh "${scannerHome}/bin/sonar"
+            }
+        }
+
+        stage('Dependency-Scan') {
             // Run OWASP Dependency-Check
             dependencyCheckPublisher(
                 pattern: '**', 
@@ -67,12 +67,7 @@ node {
             sh 'go tool cover -html=${COVERAGE_PROFILE} -o ${COVERAGE_HTML} || true'
         }
 
-        stage('Install ZAP') {
-            // Download and install OWASP ZAP
-            sh "wget ${ZAP_URL}"
-            sh "tar -xvf ${ZAP_FOLDER}.tar.gz"
-        }
-
+        
 
         stage('Publish Reports') {
             // Publish Dependency Check report
@@ -85,15 +80,6 @@ node {
                 reportName: 'Dependency Check Report'
             ])
             
-            // Publish DAST report
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: true,
-                reportDir: '',
-                reportFiles: DAST_REPORT,
-                reportName: 'DAST Report'
-            ])
 
             // Publish Unit Test Coverage report
             publishHTML([
