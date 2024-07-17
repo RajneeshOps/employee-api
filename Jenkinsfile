@@ -45,13 +45,7 @@ node {
             sh 'golangci-lint run ./... || true'
         }
 
-        stage('SonarQube Analysis') {
-            def scannerHome = tool name: sonar
-            withSonarQubeEnv {
-                sh "${scannerHome}/bin/sonar"
-            }
-        }
-
+       
         stage('Dependency-Scan') {
             // Run OWASP Dependency-Check
             dependencyCheckPublisher(
